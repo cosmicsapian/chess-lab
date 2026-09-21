@@ -527,9 +527,11 @@ function explain(payload,onText){
     var reader=res.body.getReader(),dec=new TextDecoder(),buf="",text="";
     function handle(line){
       if(line.indexOf("data:")!==0)return;
-      var j;try{j=JSON.parse(line.slice(5));}catch(e){return;}
-      if(j.type==="content_block_delta"&&j.delta&&j.delta.type==="text_delta"){text+=j.delta.text;onText(text);}
-      else if(j.type==="error")throw new Error((j.error&&j.error.message)||"API error");
+      var raw=line.slice(5).trim();if(!raw||raw==="[DONE]")return;
+      var j;try{j=JSON.parse(raw);}catch(e){return;}
+      if(j.error)throw new Error(j.error.message||"API error");
+      var c=j.candidates&&j.candidates[0],p=c&&c.content&&c.content.parts;
+      if(p)for(var i=0;i<p.length;i++)if(p[i].text){text+=p[i].text;onText(text);}
     }
     function pump(){return reader.read().then(function(r){
       if(r.done){if(buf)buf.split("\n").forEach(handle);return text;}
