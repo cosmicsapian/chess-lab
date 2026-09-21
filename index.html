@@ -50,7 +50,7 @@ textarea{min-height:76px;resize:vertical;font-family:ui-monospace,SFMono-Regular
 .evalbar .w{background:#f2f2ee;transition:height .25s ease;height:50%}
 .evalbar .tag{position:absolute;left:0;right:0;text-align:center;font-size:8px;font-weight:700;letter-spacing:-.02em}
 .boardbox{flex:1;min-width:0}
-.board{width:100%;aspect-ratio:1/1;display:grid;grid-template-columns:repeat(8,1fr);
+.board{width:100%;aspect-ratio:1/1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr))
  border-radius:6px;overflow:hidden;border:1px solid var(--line);
  touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .sq{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer}
