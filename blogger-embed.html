@@ -1,0 +1,13 @@
+<!-- Paste into a Blogger PAGE in HTML view. Replace the URL if you use a different subdomain. -->
+<iframe id="chesslab" src="https://chess.thescientificdrop.com/"
+  title="Chess Lab – Stockfish game review with AI explanations"
+  style="width:100%;height:1300px;border:0;display:block"
+  allow="clipboard-write" loading="lazy"></iframe>
+<script>
+window.addEventListener("message", function (e) {
+  if (e.origin !== "https://chess.thescientificdrop.com") return;
+  if (e.data && e.data.chesslabHeight) {
+    document.getElementById("chesslab").style.height = (e.data.chesslabHeight + 20) + "px";
+  }
+});
+</script>
