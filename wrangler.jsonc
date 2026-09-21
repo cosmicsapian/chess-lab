@@ -5,6 +5,7 @@
   "assets": { "directory": ".", "binding": "ASSETS" },
   "vars": {
     "ALLOWED_ORIGINS": "https://chess.thescientificdrop.com"
+    "MODEL": "gemini-flash-lite-latest"
   },
   "keep_vars": true
 }
