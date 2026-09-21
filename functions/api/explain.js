@@ -1,8 +1,4 @@
-// Cloudflare Pages Function: POST /api/explain
-// Holds the Anthropic key server-side and fixes the system prompt here,
-// so the endpoint can only narrate chess engine output.
-
-const MODEL = "claude-haiku-4-5-20251001";
+const MODEL = "gemini-2.5-flash-lite";
 
 const SYSTEM = `You are a chess coach explaining Stockfish output to a club player.
 HARD RULES:
@@ -15,7 +11,7 @@ Cover in order: what the played move does; where the alternative leads using its
 the size and cause of the evaluation gap; the practical or human reason a strong player might still choose the played move.
 If the question is not about the chess position in the data, reply only: "I can only discuss this position."`;
 
-const hits = new Map(); // best-effort per-isolate limiter
+const hits = new Map();
 
 export async function onRequestPost({ request, env }) {
   const allowed = (env.ALLOWED_ORIGINS || "").split(",").map(s => s.trim()).filter(Boolean);
@@ -34,27 +30,22 @@ export async function onRequestPost({ request, env }) {
   const facts = String(body.facts || "").slice(0, 6000);
   const question = String(body.question || "Explain this move.").slice(0, 400);
   if (!facts.includes("STOCKFISH")) return new Response("Missing engine data", { status: 400 });
-  if (!env.ANTHROPIC_API_KEY) return new Response("Server not configured", { status: 500 });
+  if (!env.GEMINI_API_KEY) return new Response("Server not configured (no GEMINI_API_KEY)", { status: 500 });
 
-  const upstream = await fetch("https://api.anthropic.com/v1/messages", {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${env.MODEL || MODEL}:streamGenerateContent?alt=sse&key=${env.GEMINI_API_KEY}`;
+  const upstream = await fetch(url, {
     method: "POST",
-    headers: {
-      "x-api-key": env.ANTHROPIC_API_KEY,
-      "anthropic-version": "2023-06-01",
-      "content-type": "application/json",
-    },
+    headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      model: env.MODEL || MODEL,
-      max_tokens: 700,
-      stream: true,
-      system: SYSTEM,
-      messages: [{ role: "user", content: facts + "\n\nQUESTION: " + question }],
+      systemInstruction: { parts: [{ text: SYSTEM }] },
+      contents: [{ role: "user", parts: [{ text: facts + "\n\nQUESTION: " + question }] }],
+      generationConfig: { maxOutputTokens: 700, temperature: 0.4 },
     }),
   });
 
   if (!upstream.ok) {
     const t = await upstream.text();
-    return new Response("Upstream " + upstream.status + ": " + t.slice(0, 200), { status: 502 });
+    return new Response("Upstream " + upstream.status + ": " + t.slice(0, 300), { status: 502 });
   }
   return new Response(upstream.body, {
     headers: { "content-type": "text/event-stream; charset=utf-8", "cache-control": "no-store" },
