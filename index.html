@@ -50,21 +50,21 @@ textarea{min-height:76px;resize:vertical;font-family:ui-monospace,SFMono-Regular
 .evalbar .w{background:#f2f2ee;transition:height .25s ease;height:50%}
 .evalbar .tag{position:absolute;left:0;right:0;text-align:center;font-size:8px;font-weight:700;letter-spacing:-.02em}
 .boardbox{flex:1;min-width:0}
-.board{width:100%;aspect-ratio:1/1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));
+.board{width:100%;aspect-ratio:1/1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));container-type:inline-size;
  border-radius:6px;overflow:hidden;border:1px solid var(--line);
  touch-action:manipulation;user-select:none;-webkit-user-select:none}
-.sq{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;min-width:0;min-height:0}
+.sq{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;min-width:0;min-height:0;aspect-ratio:1/1;overflow:hidden}
 .sq.l{background:var(--light)} .sq.d{background:var(--dark)}
 .sq.lm::after{content:"";position:absolute;inset:0;background:var(--lastmove);opacity:.5}
 .sq.sel::after{content:"";position:absolute;inset:0;background:var(--sel);opacity:.55}
-.sq .pc{position:relative;z-index:2;font-size:min(8.2vw,46px);line-height:1}
+.sq .pc{position:relative;z-index:2;font-size:min(8.2vw,46px);font-size:10cqw;line-height:1}
 .sq .pc.wp{color:#fff;text-shadow:0 0 1px #000,0 1px 2px rgba(0,0,0,.45)}
 .sq .pc.bp{color:#1a1a1a;text-shadow:0 0 1px #888}
 .sq .dot{position:absolute;z-index:3;width:26%;height:26%;border-radius:50%;background:rgba(20,20,20,.28)}
 .sq .ring{position:absolute;z-index:3;inset:6%;border-radius:50%;border:4px solid rgba(20,20,20,.28)}
 .sq .co{position:absolute;z-index:4;font-size:9px;font-weight:700;opacity:.55}
 .sq .co.f{right:2px;bottom:0} .sq .co.r{left:2px;top:0}
-.badge{position:absolute;z-index:5;top:-2px;right:-2px;width:42%;height:42%;border-radius:50%;
+.badge{position:absolute;z-index:5;top:1px;right:1px;width:42%;height:42%;border-radius:50%;
  display:flex;align-items:center;justify-content:center;color:#fff;font-size:min(3vw,13px);
  font-weight:800;border:2px solid var(--panel)}
 .nav{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
@@ -114,10 +114,43 @@ summary{cursor:pointer;font-size:12.5px;color:var(--fg2)}
 .hitem .ht span{font-size:11px;color:var(--fg2)}
 .credit{font-size:10.5px;color:var(--fg2);text-align:center;margin-top:18px}
 .credit a{color:inherit}
+.colboard{grid-area:board;min-width:0}.panel{grid-area:side}
+.chat{grid-area:chat;background:var(--panel);border:1px solid var(--line);border-radius:10px;
+ display:flex;flex-direction:column;height:72vh;min-height:420px;overflow:hidden;margin-top:12px}
+.chathead{display:flex;align-items:center;gap:8px;padding:9px 11px;border-bottom:1px solid var(--line);background:var(--panel2)}
+.chathead b{font-size:13.5px}
+.chathead .ctxt{flex:1;min-width:0;font-size:11.5px;color:var(--fg2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msgs{flex:1;overflow-y:auto;padding:11px;display:flex;flex-direction:column;gap:9px;scrollbar-gutter:stable}
+.msg{max-width:92%;border-radius:12px;padding:8px 11px;font-size:13.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.me{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+.msg.ai{align-self:flex-start;background:var(--panel2);border-bottom-left-radius:4px}
+.msg .chip{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;border:0;margin:0 0 5px;
+ background:rgba(255,255,255,.22);color:inherit;cursor:pointer}
+.msg .mimg{display:block;max-width:100%;max-height:200px;border-radius:8px;margin-bottom:6px}
+.msg details{margin-top:6px;border-top:1px solid var(--line);padding-top:5px;white-space:normal}
+.msg .lines div:nth-child(odd){background:var(--panel)}
+.msg .merr{margin-top:5px;font-size:12px;color:var(--blunder);white-space:normal}
+.composer{border-top:1px solid var(--line);padding:9px 11px 11px}
+.crow{display:flex;gap:6px;align-items:flex-end}
+.crow textarea{min-height:42px;max-height:140px;font-family:inherit;font-size:13.5px;resize:none;flex:1}
+.crow button{flex:0 0 auto}
+.crow .icon{padding:9px 10px;font-size:15px;line-height:1}
+.attach{position:relative;display:inline-block;margin-bottom:7px}
+.attach img{max-height:72px;max-width:160px;border-radius:6px;border:1px solid var(--line);display:block}
+.attach button{position:absolute;top:-7px;right:-7px;padding:1px 6px;border-radius:50%;font-size:11px}
+.chat.drag{outline:2px dashed var(--accent);outline-offset:-5px}
+.crow2{display:flex;gap:6px;margin-top:7px;align-items:center}
+.crow2 select{flex:1;font-size:12px;padding:5px 7px}
 @media(min-width:760px){
-  .cols{display:grid;grid-template-columns:1fr 340px;gap:14px;align-items:start}
+  .cols{display:grid;grid-template-columns:minmax(0,1fr) 320px;grid-template-areas:"board side" "chat chat";gap:14px;align-items:start}
   .panel{margin-top:0}
-  .sq .pc{font-size:44px}
+  .chat{height:560px}
+}
+@media(min-width:1180px){
+  .wrap{max-width:1460px}
+  .cols{grid-template-columns:minmax(0,1fr) 290px 390px;grid-template-areas:"board side chat"}
+  .colboard{width:100%;max-width:calc(100vh - 110px);justify-self:end}
+  .chat{margin-top:0;height:calc(100vh - 140px);min-height:520px;max-height:900px}
 }
 </style>
 </head>
@@ -133,7 +166,7 @@ summary{cursor:pointer;font-size:12.5px;color:var(--fg2)}
 <div class="engbar"><span class="led" id="led"></span><span id="engTxt">Stockfish: starting…</span></div>
 
 <div class="cols">
-<div>
+<div class="colboard">
   <div class="boardrow">
     <div class="evalbar"><div class="w" id="evalW"></div><div class="tag" id="evalTag"></div></div>
     <div class="boardbox"><div class="board" id="board"></div></div>
@@ -152,7 +185,6 @@ summary{cursor:pointer;font-size:12.5px;color:var(--fg2)}
   <div class="tabs" role="tablist">
     <button id="tMoves" role="tab" aria-selected="true">Moves</button>
     <button id="tReview" role="tab" aria-selected="false">Review</button>
-    <button id="tAsk" role="tab" aria-selected="false">Ask AI</button>
     <button id="tHist" role="tab" aria-selected="false">History</button>
     <button id="tLoad" role="tab" aria-selected="false">Load</button>
   </div>
@@ -175,23 +207,6 @@ summary{cursor:pointer;font-size:12.5px;color:var(--fg2)}
       <div class="legend" id="legend"></div>
       <div class="note" id="revNote"></div>
     </div>
-  </div>
-
-  <div class="tabbody hide" id="paneAsk">
-    <div class="ctx" id="askCtx">Pick a move in the Moves tab, then ask about it.</div>
-    <textarea id="q" placeholder="e.g. why at move 10 did White play Nxb5 and not Bxf7?"></textarea>
-    <div class="row">
-      <select id="altSel"><option value="">Alternative: Stockfish's top move</option></select>
-      <button class="p" id="askBtn" disabled>Analyse &amp; explain</button>
-    </div>
-    <div class="prog" id="askProg"></div>
-    <div class="ans" id="ans"></div>
-    <details open>
-      <summary>Stockfish output used</summary>
-      <div class="lines" id="lines"></div>
-      <div class="note">Stockfish computes; Claude only turns those numbers into words and is
-        forbidden from inventing a variation.</div>
-    </details>
   </div>
 
   <div class="tabbody hide" id="paneHist">
@@ -225,6 +240,24 @@ summary{cursor:pointer;font-size:12.5px;color:var(--fg2)}
       <summary>About the engine</summary>
       <div class="note" id="engInfo">Stockfish 18 (NNUE, lite single-threaded WebAssembly build) runs entirely in your browser. First visit downloads about 7 MB; after that it is cached.</div>
     </details>
+  </div>
+</div>
+
+<div class="chat" id="chatPanel">
+  <div class="chathead"><b>Ask AI</b><span class="ctxt" id="askCtx">Pick a move to ask about</span>
+    <button class="sm" id="chatClear" title="Clear this conversation">Clear</button></div>
+  <div class="msgs" id="msgs"></div>
+  <div class="composer">
+    <div class="attach hide" id="attachPrev"><img id="attachImg" alt="attachment preview"><button id="attachX" title="Remove image">&#x2715;</button></div>
+    <div class="crow">
+      <button class="icon" id="attachBtn" title="Attach an image (or paste / drop one)">&#128206;</button>
+      <input type="file" id="attachFile" accept="image/png,image/jpeg,image/webp" class="hide">
+      <textarea id="q" rows="2" placeholder="Why this move? e.g. why Qb3 and not Qc3?"></textarea>
+      <button class="p" id="askBtn" disabled>Send</button>
+    </div>
+    <div class="crow2"><span class="note" style="margin:0">Compare with</span>
+      <select id="altSel"><option value="">Stockfish's top move</option></select></div>
+    <div class="prog" id="askProg"></div>
   </div>
 </div>
 </div>
@@ -403,6 +436,7 @@ function toSan(s,m){
 function fromSan(s,san){
   var t=String(san).replace(/[+#?!]+$/,"").replace(/0/g,"O").trim(),l=legalMoves(s),i;
   for(i=0;i<l.length;i++)if(toSan(s,l[i]).replace(/[+#]/g,"")===t)return l[i];
+  for(i=0;i<l.length;i++)if(toSan(s,l[i]).replace(/[+#]/g,"").toLowerCase()===t.toLowerCase())return l[i];
   if(/^O-O(-O)?$/i.test(t)){var lng=t.length>3;
     for(i=0;i<l.length;i++)if((l[i].fl&FL_CASTLE)&&((l[i].t===2||l[i].t===114)===lng))return l[i];}
   return null;
@@ -514,7 +548,7 @@ var CLSCOL={best:"var(--best)",good:"var(--good)",inacc:"var(--inacc)",mistake:"
 var CLSNAME={best:"Best",good:"Good",inacc:"Inaccuracy",mistake:"Mistake",blunder:"Blunder"};
 
 /* ================================ app ================================ */
-var App={moves:[],headers:{},ply:0,review:null,sel:null,selTargets:null,flip:false,askIdx:null,endFen:START,gameId:null,notes:{}};
+var App={moves:[],headers:{},ply:0,review:null,sel:null,selTargets:null,flip:false,askIdx:null,endFen:START,gameId:null,notes:{},chat:[],pendingImg:null};
 var busy=false;
 function $(id){return document.getElementById(id);}
 
@@ -529,9 +563,10 @@ function explain(payload,onText){
       if(line.indexOf("data:")!==0)return;
       var raw=line.slice(5).trim();if(!raw||raw==="[DONE]")return;
       var j;try{j=JSON.parse(raw);}catch(e){return;}
-      if(j.error)throw new Error(j.error.message||"API error");
-      var c=j.candidates&&j.candidates[0],p=c&&c.content&&c.content.parts;
-      if(p)for(var i=0;i<p.length;i++)if(p[i].text){text+=p[i].text;onText(text);}
+      if(j.error)throw new Error((j.error&&j.error.message)||"API error");
+      var cand=j.candidates&&j.candidates[0];
+      var parts=cand&&cand.content&&cand.content.parts;
+      if(parts)for(var i=0;i<parts.length;i++)if(parts[i].text){text+=parts[i].text;onText(text);}
     }
     function pump(){return reader.read().then(function(r){
       if(r.done){if(buf)buf.split("\n").forEach(handle);return text;}
@@ -552,7 +587,8 @@ function snapshot(){
   return {id:App.gameId,saved:Date.now(),headers:App.headers,
     sans:App.moves.map(function(m){return m.san;}),
     review:App.review?{startEvalW:App.review.startEvalW,rows:App.review.slice()}:null,
-    notes:App.notes};
+    notes:App.notes,
+    chat:App.chat.map(function(m){return {role:m.role,text:m.text,ply:m.ply,label:m.label,rows:m.rows,err:m.err,hadImg:!!(m.img||m.hadImg)};})};
 }
 function saveCurrent(silent){
   if(!App.moves.length)return false;
@@ -575,6 +611,11 @@ function loadSans(sans,headers){
 function openGame(g){
   loadSans(g.sans,g.headers);
   App.gameId=g.id;App.notes=g.notes||{};
+  if(g.chat)App.chat=g.chat.slice();
+  else{App.chat=[];Object.keys(App.notes).sort(function(a,b){return a-b;}).forEach(function(k){
+    var n=App.notes[k];if(!App.moves[+k])return;
+    App.chat.push({role:"user",text:n.q||"",ply:+k,label:moveLabel(+k)},{role:"ai",text:n.answer||"",rows:n.rows});});}
+  renderChat();
   if(g.review&&g.review.rows&&g.review.rows.length===App.moves.length){
     App.review=g.review.rows.slice();App.review.startEvalW=g.review.startEvalW;
   } else App.review=null;
@@ -823,24 +864,17 @@ function showReview(){
 function renderAskCtx(){
   var i=App.askIdx!=null?App.askIdx:(App.ply>0?App.ply-1:null),sel=$("altSel");
   if(i==null||!App.moves[i]){
-    $("askCtx").textContent='Pick a move in the Moves tab (or write "move 12" in your question).';
-    sel.innerHTML='<option value="">Alternative: Stockfish\'s top move</option>';return;
+    $("askCtx").textContent=App.moves.length?'Pick a move, or write "move 12" in your question':'Load a game, or attach a screenshot';
+    sel.innerHTML='<option value="">Stockfish\'s top move</option>';return;
   }
   var mv=App.moves[i],no=Math.floor(i/2)+1,side=i%2===0?"White":"Black";
   var who=i%2===0?(App.headers.White||"White"):(App.headers.Black||"Black");
-  $("askCtx").innerHTML="Asking about <b>"+no+(i%2?"...":".")+" "+mv.san+"</b> — "+side+
-    (who!==side?" ("+who+")":"");
+  $("askCtx").textContent="About "+no+(i%2?"... ":". ")+mv.san+" — "+side+(who!==side?" ("+who+")":"");
   var s=loadFen(mv.fen);
   var alts=legalMoves(s).map(function(m){return toSan(s,m);})
     .filter(function(x){return x!==mv.san;}).sort();
-  sel.innerHTML='<option value="">Alternative: Stockfish\'s top move</option>'+
+  sel.innerHTML='<option value="">Stockfish\'s top move</option>'+
     alts.map(function(a){return "<option>"+a+"</option>";}).join("");
-  if(!busy){
-    var nt=App.notes[i];
-    $("ans").textContent=nt?(nt.answer||""):"";
-    $("lines").innerHTML=nt?rowsHtml(nt.rows):"";
-    $("askProg").textContent=nt?("Saved analysis"+(nt.q?(" — \u201c"+nt.q+"\u201d"):"")):"";
-  }
 }
 function parseIntent(q){
   var o={},m;
@@ -866,39 +900,107 @@ function resolveTarget(q){
   }
   return {idx:idx,alt:it.alt||null};
 }
+/* ---- chat ---- */
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function moveLabel(i){return (Math.floor(i/2)+1)+(i%2?"... ":". ")+App.moves[i].san;}
+function scrollChat(){var el=$("msgs");el.scrollTop=el.scrollHeight;}
+function renderChat(){
+  var el=$("msgs");
+  if(!App.chat.length){
+    el.innerHTML='<div class="empty">Pick a move and ask why it was played — for example <i>why Qb3 and not Qc3?</i><br><br>'+
+      'Stockfish analyses the position first; the AI only explains its numbers. You can also attach, paste or drop a screenshot.</div>';
+    return;
+  }
+  el.innerHTML="";
+  App.chat.forEach(function(m){
+    var d=document.createElement("div");d.className="msg "+(m.role==="user"?"me":"ai");
+    var h="";
+    if(m.role==="user"&&m.ply!=null&&App.moves[m.ply])h+='<button class="chip">'+esc(m.label||moveLabel(m.ply))+"</button><br>";
+    if(m.img)h+='<img class="mimg" alt="attached image">';
+    else if(m.hadImg)h+='<div class="note" style="margin:0 0 4px">&#128206; image (not kept in history)</div>';
+    h+='<span class="mt"></span>';
+    if(m.rows&&m.rows.length)h+='<details><summary>Stockfish lines used</summary><div class="lines">'+rowsHtml(m.rows)+"</div></details>";
+    if(m.err)h+='<div class="merr"></div>';
+    d.innerHTML=h;
+    if(m.img)d.querySelector(".mimg").src=m.img;
+    d.querySelector(".mt").textContent=m.text||(m.role==="ai"&&!m.err?"\u2026":"");
+    if(m.err)d.querySelector(".merr").textContent=m.err;
+    var chip=d.querySelector(".chip");
+    if(chip)chip.onclick=function(){App.ply=m.ply+1;App.askIdx=m.ply;App.sel=null;App.selTargets=null;renderAll();};
+    m._el=d;el.appendChild(d);
+  });
+  scrollChat();
+}
+function setAiText(m,text){m.text=text;if(m._el){m._el.querySelector(".mt").textContent=text||"\u2026";scrollChat();}}
+function chatHistory(uptoMsg){
+  var out=[],i,m;
+  for(i=0;i<App.chat.length;i++){
+    m=App.chat[i];if(m===uptoMsg)break;
+    if(m.err||!m.text)continue;
+    out.push({role:m.role==="user"?"user":"model",
+      text:(m.role==="user"&&m.label?("[About "+m.label+"] "):"")+m.text.slice(0,1500)});
+  }
+  return out.slice(-8);
+}
+function takeImage(file){
+  if(!file||!/^image\//.test(file.type)){$("askProg").textContent="That file isn't an image.";return;}
+  var fr=new FileReader();
+  fr.onload=function(){
+    var im=new Image();
+    im.onload=function(){
+      var max=1280,w=im.naturalWidth,h=im.naturalHeight,k=Math.min(1,max/Math.max(w,h));
+      var c=document.createElement("canvas");c.width=Math.max(1,Math.round(w*k));c.height=Math.max(1,Math.round(h*k));
+      var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);
+      var url=c.toDataURL("image/jpeg",0.85);
+      App.pendingImg={mime:"image/jpeg",data:url.split(",")[1],url:url};
+      $("attachImg").src=url;$("attachPrev").classList.remove("hide");$("askProg").textContent="";
+      $("askBtn").disabled=false;
+    };
+    im.onerror=function(){$("askProg").textContent="Could not read that image.";};
+    im.src=fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+function clearAttachment(){App.pendingImg=null;$("attachPrev").classList.add("hide");$("attachImg").removeAttribute("src");$("attachFile").value="";}
+function setBusy(b){busy=b;$("askBtn").disabled=b||!SF.isReady();$("bReview").disabled=b||!SF.isReady();}
+
 function askAI(){
-  if(busy||!SF.isReady())return;
-  var q=$("q").value.trim(),t=resolveTarget(q);
-  if(!App.moves[t.idx]){$("askProg").textContent="Load a game first.";return;}
+  if(busy)return;
+  var q=$("q").value.trim(),img=App.pendingImg;
+  if(!q&&!img)return;
+  if(!App.moves.length){
+    if(!img){$("askProg").textContent="Load a game or play some moves first — or attach a screenshot.";return;}
+    return chatWithoutGame(q,img);
+  }
+  if(!SF.isReady()){$("askProg").textContent="Stockfish is still loading…";return;}
+  var t=resolveTarget(q);
+  if(!App.moves[t.idx])t.idx=App.moves.length-1;
   App.askIdx=t.idx;App.ply=t.idx+1;renderAll();
   var mv=App.moves[t.idx],fen=mv.fen,s=loadFen(fen);
   var altSan=$("altSel").value||t.alt||null;
   if(altSan){var am0=fromSan(s,altSan);altSan=am0?toSan(s,am0):null;}
   var playedUci=uciOf(mv.m);
 
-  busy=true;$("askBtn").disabled=true;$("bReview").disabled=true;
-  $("ans").textContent="";$("askProg").textContent="Stockfish: searching…";
+  var userMsg={role:"user",text:q||"(see image)",ply:t.idx,label:moveLabel(t.idx),img:img?img.url:null,hadImg:!!img};
+  var aiMsg={role:"ai",text:"",rows:null};
+  App.chat.push(userMsg,aiMsg);
+  $("q").value="";clearAttachment();renderChat();
+  setBusy(true);$("askProg").textContent="Stockfish: searching…";
 
   var topPacked,topLines,Pp,Pa;
-  function pack(l,fallbackUci){
+  function pack(l,fb){
     if(!l)return null;
-    var first=(l.pv&&l.pv[0])?l.pv[0]:fallbackUci;
+    var first=(l.pv&&l.pv[0])?l.pv[0]:fb;
     return {san:pvSan(fen,[first])[0]||first,ev:evFmt(l),cp:cpOf(l),depth:l.depth,
       line:numberLine(fen,pvSan(fen,l.pv).slice(0,8))};
   }
-  function byUci(u){
-    for(var i=0;i<topLines.length;i++)
-      if(topLines[i].pv&&topLines[i].pv[0]===u)return topLines[i];
-    return null;
-  }
-  SF.go(fen,{depth:22,movetime:5000,multipv:3,onDepth:function(d){
-    $("askProg").textContent="Stockfish: depth "+d+" (top 3 moves)";}})
+  function byUci(u){for(var i=0;i<topLines.length;i++)if(topLines[i].pv&&topLines[i].pv[0]===u)return topLines[i];return null;}
+  SF.go(fen,{depth:22,movetime:5000,multipv:3,onDepth:function(d){$("askProg").textContent="Stockfish: depth "+d+" (top 3 moves)";}})
   .then(function(top){
-    topLines=top.lines;
-    topPacked=topLines.map(function(l){return pack(l);});
+    topLines=top.lines;topPacked=topLines.map(function(l){return pack(l);});
     var pl=byUci(playedUci);
     if(pl)return {lines:[pl]};
-    $("askProg").textContent="Stockfish: evaluating the move actually played…";
+    $("askProg").textContent="Stockfish: evaluating the move played…";
     return SF.go(fen,{depth:22,movetime:3500,multipv:1,searchmoves:playedUci});
   })
   .then(function(r){
@@ -913,8 +1015,7 @@ function askAI(){
     var al=byUci(altUci);
     if(al)return {lines:[al],_u:altUci};
     $("askProg").textContent="Stockfish: evaluating the alternative…";
-    return SF.go(fen,{depth:22,movetime:3500,multipv:1,searchmoves:altUci}).then(function(rr){
-      rr._u=altUci;return rr;});
+    return SF.go(fen,{depth:22,movetime:3500,multipv:1,searchmoves:altUci}).then(function(rr){rr._u=altUci;return rr;});
   })
   .then(function(r){
     Pa=r?pack(r.lines[0],r._u):null;
@@ -923,16 +1024,40 @@ function askAI(){
     if(Pa)rows.push({t:"alt "+Pa.san,e:Pa.ev,l:Pa.line});
     for(var i=0;i<topPacked.length;i++)
       if(topPacked[i])rows.push({t:"#"+(i+1)+" "+topPacked[i].san,e:topPacked[i].ev,l:topPacked[i].line});
-    $("lines").innerHTML=rowsHtml(rows);
-    return narrate(t.idx,fen,Pp,Pa,topPacked,q,rows);
+    aiMsg.rows=rows;renderChat();
+    return narrate(t.idx,fen,Pp,Pa,topPacked,q,rows,userMsg,aiMsg,img);
   })
-  .then(function(){busy=false;$("askBtn").disabled=false;$("bReview").disabled=false;})
-  .catch(function(e){
-    $("askProg").textContent="Analysis failed: "+(e&&e.message||e);
-    busy=false;$("askBtn").disabled=false;$("bReview").disabled=false;
+  .then(function(){setBusy(false);},function(e){
+    aiMsg.err="Analysis failed: "+((e&&e.message)||e);renderChat();
+    $("askProg").textContent="";setBusy(false);
   });
 }
-function narrate(idx,fen,Pp,Pa,topPacked,q,rows){
+function chatWithoutGame(q,img){
+  var userMsg={role:"user",text:q||"(see image)",img:img.url,hadImg:true};
+  var aiMsg={role:"ai",text:""};
+  App.chat.push(userMsg,aiMsg);
+  $("q").value="";clearAttachment();renderChat();setBusy(true);
+  sendToAI("STOCKFISH: no game is loaded, so there is no engine data for this question.",
+    q||"What does this image show?",userMsg,aiMsg,img,null)
+  .then(function(){setBusy(false);},function(){setBusy(false);});
+}
+function sendToAI(facts,question,userMsg,aiMsg,img,onDone){
+  $("askProg").textContent="Writing explanation…";
+  var payload={facts:facts,question:question,history:chatHistory(userMsg)};
+  if(img)payload.image={mime:img.mime,data:img.data};
+  return explain(payload,function(text){setAiText(aiMsg,text);$("askProg").textContent="";})
+  .then(function(text){
+    $("askProg").textContent="";setAiText(aiMsg,text);
+    if(onDone)onDone(text);
+    saveCurrent(true);
+  },function(e){
+    var msg=(e&&e.message)||String(e);
+    aiMsg.err=/^429/.test(msg)?"Too many requests — try again in a minute."
+      :"Explainer unavailable ("+msg.slice(0,160)+")"+(aiMsg.rows?". The Stockfish lines above still stand.":".");
+    $("askProg").textContent="";renderChat();saveCurrent(true);
+  });
+}
+function narrate(idx,fen,Pp,Pa,topPacked,q,rows,userMsg,aiMsg,img){
   var rv=App.review&&App.review[idx];
   var no=Math.floor(idx/2)+1,side=idx%2===0?"White":"Black";
   var who=idx%2===0?(App.headers.White||"White"):(App.headers.Black||"Black");
@@ -952,26 +1077,15 @@ function narrate(idx,fen,Pp,Pa,topPacked,q,rows){
 "Stockfish's own ranking here:\n"+ranking.join("\n")+"\n"+
 (rv?("\nReview grade for the played move: "+CLSNAME[rv.cls]+" (centipawn loss "+rv.loss+").\n"):"")+
 "\nGAME SO FAR: "+hist.join(" ");
-  var userQ=q||("Why "+Pp.san+(Pa?(" and not "+Pa.san):"")+" here?");
-  $("askProg").textContent="Writing explanation…";
-  return explain({facts:facts,question:userQ},function(text){
-    $("ans").textContent=text;$("askProg").textContent="";
-  }).then(function(text){
-    $("askProg").textContent="";
-    App.notes[idx]={q:userQ,answer:text,rows:rows,at:Date.now()};
-    saveCurrent(true);renderMoves();
-  },function(e){
-    var msg=(e&&e.message)||String(e);
-    $("askProg").textContent=/^429/.test(msg)?"Too many requests — try again in a minute."
-      :"Explainer unavailable ("+msg.slice(0,140)+"). The Stockfish lines above still stand.";
-    App.notes[idx]={q:userQ,answer:$("ans").textContent||"",rows:rows,at:Date.now()};
-    saveCurrent(true);renderMoves();
+  var userQ=q||("Why "+Pp.san+(Pa?(" and not "+Pa.san):"")+" here?"+(img?" (see the attached image)":""));
+  return sendToAI(facts,userQ,userMsg,aiMsg,img,function(text){
+    App.notes[idx]={q:userQ,answer:text,rows:rows,at:Date.now()};renderMoves();
   });
 }
 
 /* ---- tabs & wiring ---- */
-var panes={Moves:$("paneMoves"),Review:$("paneReview"),Ask:$("paneAsk"),Hist:$("paneHist"),Load:$("paneLoad")};
-var tabs={Moves:$("tMoves"),Review:$("tReview"),Ask:$("tAsk"),Hist:$("tHist"),Load:$("tLoad")};
+var panes={Moves:$("paneMoves"),Review:$("paneReview"),Hist:$("paneHist"),Load:$("paneLoad")};
+var tabs={Moves:$("tMoves"),Review:$("tReview"),Hist:$("tHist"),Load:$("tLoad")};
 function switchTab(n){for(var k in panes){panes[k].classList.toggle("hide",k!==n);
   tabs[k].setAttribute("aria-selected",k===n);}}
 (function(){for(var k in tabs)tabs[k].addEventListener("click",(function(name){
@@ -991,7 +1105,7 @@ $("loadBtn").onclick=function(){
   try{
     var g=parsePgn($("pgn").value);
     if(!g.moves.length)throw new Error("no moves found");
-    App.moves=g.moves;App.headers=g.headers;App.ply=0;App.review=null;App.askIdx=null;App.gameId=null;App.notes={};
+    App.moves=g.moves;App.headers=g.headers;App.ply=0;App.review=null;App.askIdx=null;App.gameId=null;App.notes={};App.chat=[];renderChat();
     recomputeEnd();
     $("revEmpty").classList.remove("hide");$("revBody").classList.add("hide");
     $("loadMsg").textContent="Loaded "+g.moves.length+" half-moves.";
@@ -1006,7 +1120,7 @@ $("sampleBtn").onclick=function(){
   $("loadBtn").click();
 };
 $("resetBtn").onclick=function(){
-  App.moves=[];App.headers={};App.ply=0;App.review=null;App.askIdx=null;App.endFen=START;App.gameId=null;App.notes={};
+  App.moves=[];App.headers={};App.ply=0;App.review=null;App.askIdx=null;App.endFen=START;App.gameId=null;App.notes={};App.chat=[];renderChat();
   $("revEmpty").classList.remove("hide");$("revBody").classList.add("hide");$("loadMsg").textContent="";
   renderAll();switchTab("Moves");};
 document.addEventListener("keydown",function(e){
@@ -1055,10 +1169,32 @@ function loadFromHash(){
     var i=kv.indexOf("=");if(i>0)p[kv.slice(0,i)]=decodeURIComponent(kv.slice(i+1));});
   var hd={};if(p.w)hd.White=p.w;if(p.b)hd.Black=p.b;if(p.e)hd.Event=p.e;
   loadSans((p.g||"").split(/\s+/).filter(Boolean),hd);
-  App.gameId=null;App.notes={};App.review=null;renderAll();
+  App.gameId=null;App.notes={};App.chat=[];App.review=null;renderChat();renderAll();
 }
+$("attachBtn").onclick=function(){$("attachFile").click();};
+$("attachFile").onchange=function(){if(this.files&&this.files[0])takeImage(this.files[0]);};
+$("attachX").onclick=clearAttachment;
+$("q").addEventListener("paste",function(e){
+  var it=e.clipboardData&&e.clipboardData.items;if(!it)return;
+  for(var i=0;i<it.length;i++)if(it[i].type.indexOf("image/")===0){takeImage(it[i].getAsFile());e.preventDefault();break;}
+});
+$("q").addEventListener("keydown",function(e){
+  if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();askAI();}
+});
+(function(){
+  var cp=$("chatPanel");
+  cp.addEventListener("dragover",function(e){e.preventDefault();cp.classList.add("drag");});
+  cp.addEventListener("dragleave",function(e){if(e.target===cp)cp.classList.remove("drag");});
+  cp.addEventListener("drop",function(e){e.preventDefault();cp.classList.remove("drag");
+    var f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];if(f)takeImage(f);});
+})();
+$("chatClear").onclick=function(){
+  if(!App.chat.length)return;
+  if(!confirm("Clear this conversation?"))return;
+  App.chat=[];renderChat();if(App.gameId)saveCurrent(true);
+};
 window.addEventListener("hashchange",loadFromHash);
-loadFromHash();renderHistory();
+loadFromHash();renderHistory();renderChat();
 
 /* ---- tell a parent page (Blogger iframe) our height ---- */
 if(window.parent!==window&&window.ResizeObserver){
