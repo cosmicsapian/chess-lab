@@ -1,17 +1,26 @@
-const MODEL = "gemini-2.5-flash-lite";
+// POST /api/explain — narrates Stockfish output with Gemini (free tier).
+// Accepts: { facts, question, history?: [{role:"user"|"model", text}], image?: {mime, data(base64)} }
 
-const SYSTEM = `You are a chess coach explaining Stockfish output to a club player.
-HARD RULES:
-- Use ONLY the moves and evaluations in the user's data. Never calculate or invent a variation.
-- Every concrete line you cite must appear verbatim in the data.
-- If the data does not settle something, say so in one clause and move on.
+const MODEL = "gemini-flash-lite-latest";
+
+const SYSTEM = `You are a chess coach inside a game-review app, explaining Stockfish output to a club player.
+RULES:
+- Engine facts (moves, evaluations, variations) must come ONLY from the ENGINE DATA in the latest message. Never calculate or invent a variation.
+- Any concrete line you cite must appear verbatim in the engine data.
+- If the user names a move that is not in the data, say briefly that it was not analysed, then explain using the moves that were.
+- If an image is attached, you may describe what it shows, but never present your reading of the image as engine analysis, and say so if it disagrees with the engine data.
+- If there is no engine data, say that Stockfish analysis needs the game loaded in the app, then help only as far as the image or question allows, without inventing evaluations.
 - Explain with squares, pawn structure, piece activity, king safety and tempo.
-- Plain prose. No markdown headings, no bullets. Four short paragraphs, under 260 words.
-Cover in order: what the played move does; where the alternative leads using its given line;
-the size and cause of the evaluation gap; the practical or human reason a strong player might still choose the played move.
-If the question is not about the chess position in the data, reply only: "I can only discuss this position."`;
+- Plain prose. No markdown headings, no bullets. A first question about a move: up to four short paragraphs, under 260 words. Follow-up questions: answer directly and more briefly.
+- Refuse only if the question has nothing to do with chess; then reply: "I can only discuss chess here."`;
 
 const hits = new Map();
+
+function push(contents, role, parts) {
+  const last = contents[contents.length - 1];
+  if (last && last.role === role) last.parts.push(...parts);   // Gemini wants alternating roles
+  else contents.push({ role, parts });
+}
 
 export async function onRequestPost({ request, env }) {
   const allowed = (env.ALLOWED_ORIGINS || "").split(",").map(s => s.trim()).filter(Boolean);
@@ -28,9 +37,26 @@ export async function onRequestPost({ request, env }) {
   let body;
   try { body = await request.json(); } catch { return new Response("Bad JSON", { status: 400 }); }
   const facts = String(body.facts || "").slice(0, 6000);
-  const question = String(body.question || "Explain this move.").slice(0, 400);
+  const question = String(body.question || "Explain this move.").slice(0, 600);
   if (!facts.includes("STOCKFISH")) return new Response("Missing engine data", { status: 400 });
   if (!env.GEMINI_API_KEY) return new Response("Server not configured (no GEMINI_API_KEY)", { status: 500 });
+
+  const contents = [];
+  const hist = Array.isArray(body.history) ? body.history.slice(-8) : [];
+  for (const h of hist) {
+    const role = h && h.role === "model" ? "model" : "user";
+    const text = String((h && h.text) || "").slice(0, 2000);
+    if (!text) continue;
+    if (!contents.length && role === "model") continue;               // must start with the user
+    push(contents, role, [{ text }]);
+  }
+  const parts = [{ text: "ENGINE DATA\n" + facts + "\n\nQUESTION: " + question }];
+  const img = body.image;
+  if (img && typeof img.data === "string" && /^image\/(jpeg|png|webp)$/.test(String(img.mime))) {
+    if (img.data.length > 3_000_000) return new Response("Image too large", { status: 413 });
+    parts.push({ inline_data: { mime_type: img.mime, data: img.data } });
+  }
+  push(contents, "user", parts);
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${env.MODEL || MODEL}:streamGenerateContent?alt=sse&key=${env.GEMINI_API_KEY}`;
   const upstream = await fetch(url, {
@@ -38,8 +64,8 @@ export async function onRequestPost({ request, env }) {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: SYSTEM }] },
-      contents: [{ role: "user", parts: [{ text: facts + "\n\nQUESTION: " + question }] }],
-      generationConfig: { maxOutputTokens: 700, temperature: 0.4 },
+      contents,
+      generationConfig: { maxOutputTokens: 800, temperature: 0.4 },
     }),
   });
 
